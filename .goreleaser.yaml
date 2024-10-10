@@ -6,8 +6,8 @@ project_name: pulumer
 
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
+    - go test ./...
 
 builds:
   - binary: pulumer
@@ -22,8 +22,6 @@ builds:
       - arm64
     flags:
       - -trimpath
-    ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
     mod_timestamp: "{{ .CommitTimestamp }}"
 
 changelog:
