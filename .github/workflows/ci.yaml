@@ -1,0 +1,51 @@
+---
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "main"
+  push:
+    branches:
+      - "main"
+    tags:
+      - "*"
+
+permissions:
+  checks: write # required to annotate code in the PR
+  contents: write # required to create releases with assets
+  pull-requests: read # required for `only-new-issues` option
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          version: "latest"
+
+      - uses: goreleaser/goreleaser-action@v6
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        with:
+          distribution: "goreleaser"
+          version: "~> v2"
+          args: release --clean --snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: goreleaser/goreleaser-action@v6
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        with:
+          distribution: "goreleaser"
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
