@@ -49,7 +49,7 @@ var (
 			}
 
 			// Bind flags to the viper before creating the CLI
-			cmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.LocalFlags().VisitAll(func(flag *pflag.Flag) {
 				if err = viper.BindPFlag(flag.Name, flag); err != nil {
 					cobra.CheckErr(err)
 				}
