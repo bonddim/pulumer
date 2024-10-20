@@ -47,8 +47,17 @@ func (c *CLI) processStacks(args []string) error {
 	}
 
 	pulumiArgs := getArgs(args)
+	workspaceInstalledDeps := []string{}
 	for _, stack := range c.stacks {
 		fmt.Fprintf(os.Stderr, "Running: pulumi %s for stack %s ...\n", strings.Join(args, " "), stack.Id)
+		// Install dependencies for each workspace if not installed already
+		if !slices.Contains(workspaceInstalledDeps, stack.Workspace) {
+			if err := c.pulumiCli.Run(stack.Workspace, []string{"install", "--use-language-version-tools"}); err != nil {
+				return err
+			}
+			workspaceInstalledDeps = append(workspaceInstalledDeps, stack.Workspace)
+		}
+
 		if err := c.pulumiCli.Run(stack.Workspace, append(pulumiArgs, "--stack", stack.Name)); err != nil {
 			return err
 		}
