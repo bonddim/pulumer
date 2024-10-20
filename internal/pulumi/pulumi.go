@@ -31,7 +31,7 @@ func getPulumi(ctx context.Context) (auto.PulumiCommand, error) {
 			return nil, fmt.Errorf("unable to install pulumi cli: %w", err)
 		}
 	}
-	fmt.Printf("pulumi cli initialized, version: %s\n", cmd.Version().String())
+	fmt.Fprintf(os.Stderr, "pulumi cli initialized, version: %s\n", cmd.Version().String())
 	return cmd, nil
 }
 
