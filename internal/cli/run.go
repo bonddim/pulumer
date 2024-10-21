@@ -12,7 +12,7 @@ import (
 // Run runs pulumi command with the given arguments, attaches stdout/stderr, and exits the main program on failure.
 func (c *CLI) Run(args []string) error {
 	// init pulumi cli
-	pulumiCli, err := pulumi.NewCLI(c.ctx)
+	pulumiCli, err := pulumi.NewCLI(c.ctx, c.cfg.PulumiVersion)
 	if err != nil {
 		return err
 	}

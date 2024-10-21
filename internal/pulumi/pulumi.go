@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/blang/semver"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 )
 
@@ -14,18 +15,25 @@ type CLI struct {
 	cmd auto.PulumiCommand
 }
 
-func NewCLI(ctx context.Context) (*CLI, error) {
-	cmd, err := getPulumi(ctx)
+func NewCLI(ctx context.Context, version string) (*CLI, error) {
+	requiredVersion, err := semver.Parse(version)
+	if err != nil {
+		return nil, fmt.Errorf("invalid version: %w", err)
+	}
+
+	cmd, err := getPulumi(ctx, requiredVersion)
 	if err != nil {
 		return nil, err
 	}
 	return &CLI{cmd: cmd, ctx: ctx}, nil
 }
 
-func getPulumi(ctx context.Context) (auto.PulumiCommand, error) {
-	cmd, err := auto.NewPulumiCommand(&auto.PulumiCommandOptions{})
+func getPulumi(ctx context.Context, version semver.Version) (auto.PulumiCommand, error) {
+	cmd, err := auto.NewPulumiCommand(&auto.PulumiCommandOptions{
+		Version: version,
+	})
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "pulumi cli not found, installing...")
+		fmt.Fprintln(os.Stderr, "pulumi cli with required version not found in PATH, installing...")
 		cmd, err = auto.InstallPulumiCommand(ctx, &auto.PulumiCommandOptions{})
 		if err != nil {
 			return nil, fmt.Errorf("unable to install pulumi cli: %w", err)

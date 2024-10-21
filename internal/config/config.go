@@ -9,10 +9,11 @@ import (
 )
 
 type Config struct {
-	Changed  bool
-	Reversed bool
-	Sorted   bool
-	Since    string
+	Changed       bool
+	Reversed      bool
+	Sorted        bool
+	Since         string
+	PulumiVersion string `mapstructure:"pulumi-version"`
 }
 
 // NewConfig reads in config file and ENV variables if set.
@@ -31,6 +32,7 @@ func NewConfig(cfgFile string) (*Config, error) {
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("pulumer")
 	viper.EnvKeyReplacer(strings.NewReplacer("-", "_"))
+	setDefaults()
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
@@ -47,4 +49,9 @@ func NewConfig(cfgFile string) (*Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func setDefaults() {
+	// Minimum required version of pulumi cli.
+	viper.SetDefault("pulumi-version", "3.135.0")
 }
