@@ -24,5 +24,13 @@ builds:
       - -trimpath
     mod_timestamp: "{{ .CommitTimestamp }}"
 
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: checksums.txt
+
 changelog:
-  use: github-native
+  use: github
