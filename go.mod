@@ -4,7 +4,7 @@ go 1.23.2
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/go-git/go-billy/v5 v5.5.0
+	github.com/go-git/go-billy/v5 v5.6.0
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/pulumi/pulumi/sdk/v3 v3.137.0
 	github.com/spf13/cobra v1.8.1
